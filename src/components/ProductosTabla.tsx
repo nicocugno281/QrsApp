@@ -50,7 +50,7 @@ export default function ProductosTabla({
     origen: "",
     numero_certificacion: "",
     organismo_certificador: "",
-  }); // Inicializa con un objeto vacío
+  });
   const [qrProducto, setQrProducto] = useState<Producto | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isNewModalOpen, setIsNewModalOpen] = useState(false); // Modal para nuevo producto
@@ -80,7 +80,20 @@ export default function ProductosTabla({
   };
 
   const handleEdit = (producto: Producto) => {
-    setEditingProducto(producto);
+    setEditingProducto({
+      ...producto,
+      cuit: producto.cuit || "",
+      razon_social: producto.razon_social || "",
+      mail: producto.mail || "",
+      telefono: producto.telefono || "",
+      identificador_producto: producto.identificador_producto || "",
+      marca: producto.marca || "",
+      modelo: producto.modelo || "",
+      codigo_interno: producto.codigo_interno || "",
+      origen: producto.origen || "",
+      numero_certificacion: producto.numero_certificacion || "",
+      organismo_certificador: producto.organismo_certificador || "",
+    });
     setIsEditModalOpen(true);
     setIsQRModalOpen(false);
   };
@@ -99,10 +112,18 @@ export default function ProductosTabla({
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeNewProducto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setNewProducto((prev) => ({
       ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleChangeEditingProducto = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setEditingProducto((prev) => ({
+      ...prev!,
       [name]: value,
     }));
   };
@@ -350,8 +371,8 @@ export default function ProductosTabla({
                 <input
                   type="text"
                   name="cuit"
-                  value={newProducto?.cuit || ""}
-                  onChange={handleChange}
+                  value={newProducto.cuit}
+                  onChange={handleChangeNewProducto}
                 />
               </label>
               <label>
@@ -359,8 +380,8 @@ export default function ProductosTabla({
                 <input
                   type="text"
                   name="razon_social"
-                  value={newProducto?.razon_social || ""}
-                  onChange={handleChange}
+                  value={newProducto.razon_social}
+                  onChange={handleChangeNewProducto}
                 />
               </label>
               <label>
@@ -368,8 +389,8 @@ export default function ProductosTabla({
                 <input
                   type="email"
                   name="mail"
-                  value={newProducto?.mail || ""}
-                  onChange={handleChange}
+                  value={newProducto.mail}
+                  onChange={handleChangeNewProducto}
                 />
               </label>
               <label>
@@ -377,8 +398,8 @@ export default function ProductosTabla({
                 <input
                   type="text"
                   name="telefono"
-                  value={newProducto?.telefono || ""}
-                  onChange={handleChange}
+                  value={newProducto.telefono}
+                  onChange={handleChangeNewProducto}
                 />
               </label>
               <label>
@@ -386,8 +407,8 @@ export default function ProductosTabla({
                 <input
                   type="text"
                   name="identificador_producto"
-                  value={newProducto?.identificador_producto || ""}
-                  onChange={handleChange}
+                  value={newProducto.identificador_producto}
+                  onChange={handleChangeNewProducto}
                 />
               </label>
               <label>
@@ -395,8 +416,8 @@ export default function ProductosTabla({
                 <input
                   type="text"
                   name="marca"
-                  value={newProducto?.marca || ""}
-                  onChange={handleChange}
+                  value={newProducto.marca}
+                  onChange={handleChangeNewProducto}
                 />
               </label>
               <label>
@@ -404,8 +425,8 @@ export default function ProductosTabla({
                 <input
                   type="text"
                   name="modelo"
-                  value={newProducto?.modelo || ""}
-                  onChange={handleChange}
+                  value={newProducto.modelo}
+                  onChange={handleChangeNewProducto}
                 />
               </label>
               <label>
@@ -413,8 +434,8 @@ export default function ProductosTabla({
                 <input
                   type="text"
                   name="codigo_interno"
-                  value={newProducto?.codigo_interno || ""}
-                  onChange={handleChange}
+                  value={newProducto.codigo_interno || ""}
+                  onChange={handleChangeNewProducto}
                 />
               </label>
               <label>
@@ -422,8 +443,8 @@ export default function ProductosTabla({
                 <input
                   type="text"
                   name="origen"
-                  value={newProducto?.origen || ""}
-                  onChange={handleChange}
+                  value={newProducto.origen}
+                  onChange={handleChangeNewProducto}
                 />
               </label>
               <label>
@@ -431,8 +452,8 @@ export default function ProductosTabla({
                 <input
                   type="text"
                   name="numero_certificacion"
-                  value={newProducto?.numero_certificacion || ""}
-                  onChange={handleChange}
+                  value={newProducto.numero_certificacion}
+                  onChange={handleChangeNewProducto}
                 />
               </label>
               <label>
@@ -440,8 +461,8 @@ export default function ProductosTabla({
                 <input
                   type="text"
                   name="organismo_certificador"
-                  value={newProducto?.organismo_certificador || ""}
-                  onChange={handleChange}
+                  value={newProducto.organismo_certificador}
+                  onChange={handleChangeNewProducto}
                 />
               </label>
               <button type="button" onClick={handleCreateNewProducto}>
@@ -465,7 +486,7 @@ export default function ProductosTabla({
                   type="text"
                   name="cuit"
                   value={editingProducto.cuit}
-                  onChange={handleChange}
+                  onChange={handleChangeEditingProducto}
                 />
               </label>
               <label>
@@ -474,7 +495,7 @@ export default function ProductosTabla({
                   type="text"
                   name="razon_social"
                   value={editingProducto.razon_social}
-                  onChange={handleChange}
+                  onChange={handleChangeEditingProducto}
                 />
               </label>
               <label>
@@ -483,7 +504,7 @@ export default function ProductosTabla({
                   type="email"
                   name="mail"
                   value={editingProducto.mail}
-                  onChange={handleChange}
+                  onChange={handleChangeEditingProducto}
                 />
               </label>
               <label>
@@ -492,7 +513,7 @@ export default function ProductosTabla({
                   type="text"
                   name="telefono"
                   value={editingProducto.telefono}
-                  onChange={handleChange}
+                  onChange={handleChangeEditingProducto}
                 />
               </label>
               <label>
@@ -501,7 +522,7 @@ export default function ProductosTabla({
                   type="text"
                   name="identificador_producto"
                   value={editingProducto.identificador_producto}
-                  onChange={handleChange}
+                  onChange={handleChangeEditingProducto}
                 />
               </label>
               <label>
@@ -510,7 +531,7 @@ export default function ProductosTabla({
                   type="text"
                   name="marca"
                   value={editingProducto.marca}
-                  onChange={handleChange}
+                  onChange={handleChangeEditingProducto}
                 />
               </label>
               <label>
@@ -519,7 +540,7 @@ export default function ProductosTabla({
                   type="text"
                   name="modelo"
                   value={editingProducto.modelo}
-                  onChange={handleChange}
+                  onChange={handleChangeEditingProducto}
                 />
               </label>
               <label>
@@ -528,7 +549,7 @@ export default function ProductosTabla({
                   type="text"
                   name="codigo_interno"
                   value={editingProducto.codigo_interno || ""}
-                  onChange={handleChange}
+                  onChange={handleChangeEditingProducto}
                 />
               </label>
               <label>
@@ -537,7 +558,7 @@ export default function ProductosTabla({
                   type="text"
                   name="origen"
                   value={editingProducto.origen}
-                  onChange={handleChange}
+                  onChange={handleChangeEditingProducto}
                 />
               </label>
               <label>
@@ -546,7 +567,7 @@ export default function ProductosTabla({
                   type="text"
                   name="numero_certificacion"
                   value={editingProducto.numero_certificacion}
-                  onChange={handleChange}
+                  onChange={handleChangeEditingProducto}
                 />
               </label>
               <label>
@@ -555,7 +576,7 @@ export default function ProductosTabla({
                   type="text"
                   name="organismo_certificador"
                   value={editingProducto.organismo_certificador}
-                  onChange={handleChange}
+                  onChange={handleChangeEditingProducto}
                 />
               </label>
               <button type="button" onClick={handleSave}>
