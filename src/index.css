@@ -340,6 +340,17 @@ modal-content button {
   outline: none;
 }
 
+.logo-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.logo {
+  width: 100px; /* Ajusta el tamaño del logo */
+  height: auto;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: var(--text-color);

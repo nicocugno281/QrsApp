@@ -9,6 +9,7 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import logo from "../../image.png"; // Ruta corregida para la imagen
 
 interface Producto {
   id?: string; // ID opcional para nuevos productos
@@ -39,10 +40,10 @@ export default function ProductosTabla({
   const [currentPage, setCurrentPage] = useState(1);
   const [editingProducto, setEditingProducto] = useState<Producto | null>(null);
   const [newProducto, setNewProducto] = useState<Producto>({
-    cuit: "",
-    razon_social: "",
-    mail: "",
-    telefono: "",
+    cuit: "20-14408519-2",
+    razon_social: "ALEJANDRO JOSE VISOKOLSKIS",
+    mail: "motos@okinoi.com.ar",
+    telefono: "0351-4750111",
     identificador_producto: "",
     marca: "",
     modelo: "",
@@ -145,16 +146,22 @@ export default function ProductosTabla({
   const handleCreateNewProducto = async () => {
     if (newProducto) {
       const productosRef = collection(db, categoriaSeleccionada);
-      const docRef = await addDoc(productosRef, { ...newProducto });
+      const docRef = await addDoc(productosRef, {
+        ...newProducto,
+        cuit: "20-14408519-2",
+        razon_social: "ALEJANDRO JOSE VISOKOLSKIS",
+        mail: "motos@okinoi.com.ar",
+        telefono: "0351-4750111",
+      });
       setProductos((prev) => [
         ...prev,
         { id: docRef.id, ...newProducto },
       ]);
       setNewProducto({
-        cuit: "",
-        razon_social: "",
-        mail: "",
-        telefono: "",
+        cuit: "20-14408519-2",
+        razon_social: "ALEJANDRO JOSE VISOKOLSKIS",
+        mail: "motos@okinoi.com.ar",
+        telefono: "0351-4750111",
         identificador_producto: "",
         marca: "",
         modelo: "",
@@ -257,6 +264,39 @@ export default function ProductosTabla({
     saveAs(zipBlob, `QRs_${categoriaSeleccionada}.zip`); // Descarga el archivo ZIP
   };
 
+  const handleDownloadAllQRsAsPNG = async () => {
+    const zip = new JSZip();
+
+    for (const producto of productos) {
+      const qrData = `
+        Identif Producto: ${producto.identificador_producto}
+        Marca: ${producto.marca}
+        Modelo: ${producto.modelo}
+        Código Interno: ${producto.codigo_interno}
+        Origen: ${producto.origen}
+        Número de Certificación: ${producto.numero_certificacion}
+        Organismo Certificador: ${producto.organismo_certificador}
+        Razón Social: ${producto.razon_social}
+        CUIT: ${producto.cuit}
+        Mail: ${producto.mail}
+        Teléfono: ${producto.telefono}
+      `;
+
+      try {
+        const qrCode = await QRCode.toDataURL(qrData);
+        const qrBlob = await fetch(qrCode).then((res) => res.blob());
+
+        const nombreArchivo = producto.codigo_interno || `QR_${producto.id}`;
+        zip.file(`${nombreArchivo}.png`, qrBlob); // Agrega el archivo PNG al ZIP
+      } catch (error) {
+        console.error(`Error generando QR para producto ${producto.id}:`, error);
+      }
+    }
+
+    const zipBlob = await zip.generateAsync({ type: "blob" });
+    saveAs(zipBlob, `QRs_${categoriaSeleccionada}_PNG.zip`); // Descarga el archivo ZIP
+  };
+
   const filteredProductos = productos.filter((producto) => {
     const codigoInterno = producto.codigo_interno ? String(producto.codigo_interno) : "";
     return codigoInterno.toLowerCase().includes(searchTerm.toLowerCase());
@@ -269,6 +309,11 @@ export default function ProductosTabla({
 
   return (
     <div className="container">
+      {/* Logo de la empresa */}
+      <div className="logo-container">
+        <img src={logo} alt="Logo de la empresa" className="logo" />
+      </div>
+
       <h1>Productos por Categoría</h1>
       <CategoriaSelector
         categoriaSeleccionada={categoriaSeleccionada}
@@ -285,6 +330,11 @@ export default function ProductosTabla({
       </button>
       <button onClick={handleDownloadAllQRsAsZip} className="btn">
         <FaQrcode style={{ marginRight: "0.25rem" }} />
+        PDF
+      </button>
+      <button onClick={handleDownloadAllQRsAsPNG} className="btn">
+        <FaQrcode style={{ marginRight: "0.25rem" }} />
+        PNG
       </button>
       {loading ? (
         <p>Cargando...</p>
@@ -372,7 +422,7 @@ export default function ProductosTabla({
                   type="text"
                   name="cuit"
                   value={newProducto.cuit}
-                  onChange={handleChangeNewProducto}
+                  disabled
                 />
               </label>
               <label>
@@ -381,7 +431,7 @@ export default function ProductosTabla({
                   type="text"
                   name="razon_social"
                   value={newProducto.razon_social}
-                  onChange={handleChangeNewProducto}
+                  disabled
                 />
               </label>
               <label>
@@ -390,7 +440,7 @@ export default function ProductosTabla({
                   type="email"
                   name="mail"
                   value={newProducto.mail}
-                  onChange={handleChangeNewProducto}
+                  disabled
                 />
               </label>
               <label>
@@ -399,7 +449,7 @@ export default function ProductosTabla({
                   type="text"
                   name="telefono"
                   value={newProducto.telefono}
-                  onChange={handleChangeNewProducto}
+                  disabled
                 />
               </label>
               <label>
@@ -486,7 +536,7 @@ export default function ProductosTabla({
                   type="text"
                   name="cuit"
                   value={editingProducto.cuit}
-                  onChange={handleChangeEditingProducto}
+                  disabled
                 />
               </label>
               <label>
@@ -495,7 +545,7 @@ export default function ProductosTabla({
                   type="text"
                   name="razon_social"
                   value={editingProducto.razon_social}
-                  onChange={handleChangeEditingProducto}
+                  disabled
                 />
               </label>
               <label>
@@ -504,7 +554,7 @@ export default function ProductosTabla({
                   type="email"
                   name="mail"
                   value={editingProducto.mail}
-                  onChange={handleChangeEditingProducto}
+                  disabled
                 />
               </label>
               <label>
@@ -513,7 +563,7 @@ export default function ProductosTabla({
                   type="text"
                   name="telefono"
                   value={editingProducto.telefono}
-                  onChange={handleChangeEditingProducto}
+                  disabled
                 />
               </label>
               <label>
